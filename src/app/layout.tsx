@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" className={openSans.className}>
             <body className="flex flex-col w-full max-w-screen-2xl mx-auto">
                 <Header />
                 <main className="grow">{children}</main>
