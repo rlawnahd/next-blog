@@ -6,6 +6,7 @@ type Form = {
     subject: string;
     message: string;
 };
+
 export default function ContactForm() {
     const [form, setForm] = useState<Form>({ from: '', subject: '', message: '' });
     const [banner, setBanner] = useState<BannerData | null>(null);
@@ -13,14 +14,31 @@ export default function ContactForm() {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
+    async function sendContactMail() {
+        const response = await fetch('/api/mail', {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || '서버 요청에 실패함');
+        }
+        console.log(data);
+        return data;
+    }
+
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(form);
+        sendContactMail();
         setBanner({ message: '성공했어', state: 'success' });
         setTimeout(() => {
             setBanner(null);
         }, 3000);
     };
+
     return (
         <section className="w-full max-w-md">
             {banner && <Banner banner={banner} />}
@@ -31,11 +49,21 @@ export default function ContactForm() {
                 <label htmlFor="from" className="font-semibold">
                     Your Email
                 </label>
-                <input type="mail" id="from" name="from" required autoFocus value={form.from} onChange={onChange} />
+                <input
+                    className="text-black"
+                    type="mail"
+                    id="from"
+                    name="from"
+                    required
+                    autoFocus
+                    value={form.from}
+                    onChange={onChange}
+                />
                 <label htmlFor="subject" className="font-semibold">
                     Subject
                 </label>
                 <input
+                    className="text-black"
                     type="text"
                     id="subject"
                     name="subject"
