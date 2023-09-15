@@ -1,42 +1,36 @@
 'use client';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import Banner, { BannerData } from './Banner';
+import { sendContactEmail } from '@/service/contact';
 type Form = {
     from: string;
     subject: string;
     message: string;
 };
-
+const DEFAULT_DATA = { from: '', subject: '', message: '' };
 export default function ContactForm() {
-    const [form, setForm] = useState<Form>({ from: '', subject: '', message: '' });
+    const [form, setForm] = useState<Form>(DEFAULT_DATA);
     const [banner, setBanner] = useState<BannerData | null>(null);
     const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
-    async function sendContactMail() {
-        const response = await fetch('/api/mail', {
-            method: 'POST',
-            body: JSON.stringify(form),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || '서버 요청에 실패함');
-        }
-        console.log(data);
-        return data;
-    }
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        sendContactMail();
-        setBanner({ message: '성공했어', state: 'success' });
-        setTimeout(() => {
-            setBanner(null);
-        }, 3000);
+        sendContactEmail(form)
+            .then(() => {
+                setBanner({ message: '메일을 성공적으로 보냈습니다.', state: 'success' });
+                setForm(DEFAULT_DATA);
+            })
+            .catch(() => {
+                setBanner({ message: '메일 전송에 실패했습니다. 다시 시도해 주세요', state: 'error' });
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    setBanner(null);
+                }, 3000);
+            });
     };
 
     return (

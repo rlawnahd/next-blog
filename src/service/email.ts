@@ -1,5 +1,5 @@
 export type EmailData = {
-    form: string;
+    from: string;
     subject: string;
     message: string;
 };
