@@ -18,12 +18,14 @@ export default function ContactForm() {
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(form);
         sendContactEmail(form)
             .then(() => {
                 setBanner({ message: '메일을 성공적으로 보냈습니다.', state: 'success' });
                 setForm(DEFAULT_DATA);
             })
-            .catch(() => {
+            .catch((error) => {
+                console.log(error);
                 setBanner({ message: '메일 전송에 실패했습니다. 다시 시도해 주세요', state: 'error' });
             })
             .finally(() => {
@@ -79,7 +81,9 @@ export default function ContactForm() {
                     onChange={onChange}
                     className="text-black"
                 />
-                <button className="bg-yellow-300 text-black font-bold hover:bg-yellow-400">Submit</button>
+                <button type="submit" className="bg-yellow-300 text-black font-bold hover:bg-yellow-400">
+                    Submit
+                </button>
             </form>
         </section>
     );

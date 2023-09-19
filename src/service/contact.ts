@@ -7,7 +7,7 @@ export async function sendContactEmail(email: EmailData) {
         method: 'POST',
         body: JSON.stringify(email),
         headers: {
-            'Content-Type:': 'application/json',
+            'Content-Type': 'application/json',
         },
     });
 
